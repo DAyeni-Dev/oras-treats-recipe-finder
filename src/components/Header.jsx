@@ -19,7 +19,7 @@ function Header() {
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
-        <h1 className="text-4xl font-bold">ORA'S Treats</h1>
+        <h1 className="text-7xl font-bold">ORA'S Treats</h1>
         <h4 className="text-lg mt-2">Recipe Finder</h4>
         <h2 className="text-xl mt-2">Discover, Plan and Savor Every Meal</h2>
         <p className="mt-4 font-mono max-w-xl">

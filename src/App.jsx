@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [meals, setMeals] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("pasta");
+  const [searchTerm, setSearchTerm] = useState("chicken");
 
   useEffect(() => {
     fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`)
