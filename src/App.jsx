@@ -1,4 +1,5 @@
 import Header from "./components/Header";
+import RecipeCard from "./components/RecipeCard";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -21,16 +22,9 @@ function App() {
       <Header onSearch={(term) => setSearchTerm(term)} />
       <main className="p-4">
         {meals.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {meals.map((meal) => (
-              <div key={meal.idMeal} className="border rounded p-2 shadow">
-                <img
-                  src={meal.strMealThumb}
-                  alt={meal.strMeal}
-                  className="w-full rounded"
-                />
-                <h3 className="text-sm font-semibold mt-2">{meal.strMeal}</h3>
-              </div>
+              <RecipeCard key={meal.idMeal} meal={meal} />
             ))}
           </div>
         ) : (
