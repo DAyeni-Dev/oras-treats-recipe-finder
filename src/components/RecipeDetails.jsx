@@ -31,11 +31,9 @@ function RecipeDetails() {
         className="w-full rounded-lg"
       />
       <h1 className="text-3xl font-bold mt-4">{meal.strMeal}</h1>
-      <p className="text-gray-700">
-        {meal.strCategory} | {meal.strArea}
-      </p>
+      <p className="text-gray-700">{meal.strCategory} | {meal.strArea}</p>
 
-      <h2 className="text-xl font-semibold mt-6">Ingredients</h2>
+      <h2 className="text-xl font-semibold mt-6">Treats</h2>
       <ul className="list-disc list-inside">
         {ingredients.map((ing, index) => (
           <li key={index}>{ing}</li>
