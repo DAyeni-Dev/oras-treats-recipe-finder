@@ -1,15 +1,23 @@
+import { Link } from "react-router-dom"
+
+
 function RecipeCard({ meal }) {
-    return (
-        <div className="border rounded p-2 shadow w-40 mx auto">
-            <img
-                src={meal.strMealThumb}
-                alt={meal.strMeal}
-                className="w-32 h-32 object-cover mx-auto rounded"/>
-                <h3 className="text-sm font-semibold mt-2 text-center">
-                    {meal.strMeal}
-                </h3>
-        </div>
-    );
+  return (
+    <link to={'/recipe/${meal.idMeal}'}>
+    <div className="border rounded-lg p-2 shadow-sm w-40 hover:scale-150 transition max-auto">
+   
+        <img
+          src={meal.strMealThumb}
+          alt={meal.strMeal}
+          className="w-full h-full object-cover"
+        />
+    
+      <h3 className="text-sm font-semibold mt-2 text-center text-gray-800 line-clamp-2">
+        {meal.strMeal}
+      </h3>
+    </div>
+    </link>
+  );
 }
 
-export default RecipeCard
+export default RecipeCard;
