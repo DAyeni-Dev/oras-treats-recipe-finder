@@ -1,7 +1,7 @@
 import bgImage from "../assets/images/ora-logo-white.png";
 import { useState } from "react";
 
-function Header({ onSearch }) {
+function TreatBar({ onSearch }) {
   const [query, setQuery] = useState("");
 
   const handleSubmit = (e) => {
@@ -50,4 +50,4 @@ function Header({ onSearch }) {
   );
 }
 
-export default Header;
+export default TreatBar;
