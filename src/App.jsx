@@ -1,8 +1,9 @@
-import TreatBar from "./components/TreatBar";
-import TreatCard from "./components/TreatCard";
 import { useEffect, useState } from "react";
-import TreatDetails from "./components/TreatDetails";
 import { Routes, Route } from "react-router-dom";
+
+import TreatBar from "./components/TreatBar";
+import TreatList from "./components/TreatList";
+import TreatDetails from "./components/TreatDetails";
 
 function App() {
   const [treats, setTreats] = useState([]);
@@ -21,23 +22,15 @@ function App() {
 
   return (
     <div>
-      <TreatBar onSearch={(term) => setSearchTerm(term)} />
+      
+      <TreatBar onSearch={setSearchTerm} />
+
       <main className="p-4">
         <Routes>
-          <Route
-            path="/"
-            element={
-              treats.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-                  {treats.map((treat) => (
-                    <TreatCard key={treat.idMeal} treat={treat} />
-                  ))}
-                </div>
-              ) : (
-                <p>No Treats Found</p>
-              )
-            }
-          />
+         
+          <Route path="/" element={<TreatList treats={treats} />} />
+
+          
           <Route path="/treat/:id" element={<TreatDetails />} />
         </Routes>
       </main>
