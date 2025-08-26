@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-
+import Footer from "./components/Footer";
 import TreatBar from "./components/TreatBar";
 import TreatList from "./components/TreatList";
 import TreatDetails from "./components/TreatDetails";
@@ -21,19 +21,18 @@ function App() {
   }, [searchTerm]);
 
   return (
-    <div>
-      
+    <div className="flex flex-col min-h-screen">
       <TreatBar onSearch={setSearchTerm} />
 
-      <main className="p-4">
+      <main className="flex-grow p-4">
         <Routes>
-         
-          <Route path="/" element={<TreatList treats={treats} />} />
-
-          
+          <Route path="/" element={<div></div>} />
+          <Route path="/treats" element={<TreatList treats={treats} />} />
           <Route path="/treat/:id" element={<TreatDetails />} />
         </Routes>
       </main>
+
+      <Footer />
     </div>
   );
 }

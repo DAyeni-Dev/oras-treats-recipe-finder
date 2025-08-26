@@ -8,7 +8,7 @@ function TreatBar() {
 
   return (
     <header
-      className="relative w-full min-h-[300px] text-white"
+      className="relative w-full min-h-[650px] text-white"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
