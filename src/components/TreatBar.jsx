@@ -28,7 +28,7 @@ function TreatBar() {
           className="sm:hidden p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X size={28} /> : <Menu size={28} />}
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
         <ul className="hidden sm:flex gap-8 font-medium">

@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer className="bg-green-600 text-white py-6 mt-10">
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between px-6">
-        {/* Brand */}
+        
         <h2 className="text-xl font-bold">ORA's Treats 2025</h2>
 
         <div className="flex gap-6 mt-4 sm:mt-0">
