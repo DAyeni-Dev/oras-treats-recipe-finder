@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"; 
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import bgImage from "../assets/images/ora-logo-white.png";
@@ -15,17 +15,15 @@ function TreatBar() {
         backgroundPosition: "center",
       }}
     >
-     
       <div className="absolute inset-0 bg-black/50"></div>
 
- 
       <nav className="relative z-20 flex justify-between items-center p-6">
+        
         <div>
           <h1 className="text-2xl font-bold">ORA’s Treats</h1>
           <h4 className="text-sm font-light">Recipe Finder</h4>
         </div>
 
-     
         <button
           className="sm:hidden p-2"
           onClick={() => setIsOpen(!isOpen)}
@@ -33,7 +31,6 @@ function TreatBar() {
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
 
-     
         <ul className="hidden sm:flex gap-8 font-medium">
           <li><Link to="/" className="hover:text-green-400">Kitchen</Link></li>
           <li><Link to="/treats" className="hover:text-green-400">Treats</Link></li>
@@ -57,9 +54,8 @@ function TreatBar() {
         </ul>
       )}
 
-  
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        <h2 className="text-3xl mt-2">Discover, Plan and Savor Every Meal</h2>
+        <h2 className="text-4xl font-bold mt-2">Discover, Plan & Savor Every Meal</h2>
         <p className="mt-4 text-lg font-mono max-w-xl">
           Find delicious recipes, plan your meals, and shop smarter with ORA’s Treat Recipes.
         </p>

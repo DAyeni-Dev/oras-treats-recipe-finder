@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import TreatBar from "./components/TreatBar";
 import TreatList from "./components/TreatList";
 import TreatDetails from "./components/TreatDetails";
+import LandingPage from "./components/LandingPage"; 
 
 function App() {
   const [treats, setTreats] = useState([]);
@@ -22,12 +23,15 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      
       <TreatBar onSearch={setSearchTerm} />
 
       <main className="flex-grow p-4">
         <Routes>
-          <Route path="/" element={<div></div>} />
+          <Route path="/" element={<LandingPage />} />
+
           <Route path="/treats" element={<TreatList treats={treats} />} />
+
           <Route path="/treat/:id" element={<TreatDetails />} />
         </Routes>
       </main>

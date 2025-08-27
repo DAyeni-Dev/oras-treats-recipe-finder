@@ -28,14 +28,14 @@ function TreatDetails() {
       <img
         src={treat.strMealThumb}
         alt={treat.strMeal}
-        className="w-full rounded-lg"
+        className="w-auto rounded-lg"
       />
       <h1 className="text-3xl font-bold mt-4">{treat.strMeal}</h1>
       <p className="text-gray-700">
         {treat.strCategory} | {treat.strArea}
       </p>
 
-      <h2 className="text-xl font-semibold mt-6">Find Your Treat</h2>
+      <h2 className="text-xl font-semibold mt-6">Treat List</h2>
       <ul className="list-disc list-inside">
         {findYourTreat.map((ing, index) => (
           <li key={index}>{ing}</li>
