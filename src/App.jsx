@@ -5,6 +5,7 @@ import TreatBar from "./components/TreatBar";
 import TreatList from "./components/TreatList";
 import TreatDetails from "./components/TreatDetails";
 import LandingPage from "./components/LandingPage"; 
+import MarketBasket from"./components/MarketBasket";
 
 function App() {
   const [treats, setTreats] = useState([]);
@@ -29,10 +30,9 @@ function App() {
       <main className="flex-grow p-4">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-
           <Route path="/treats" element={<TreatList treats={treats} />} />
-
           <Route path="/treat/:id" element={<TreatDetails />} />
+          <Route path="/grocery" element={<MarketBasket />} />
         </Routes>
       </main>
 

@@ -8,10 +8,10 @@ function TreatBar() {
 
   return (
     <header
-      className="relative w-full min-h-[650px] text-white"
+      className="relative w-full min-h-[620px] text-white"
       style={{
         backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
+        backgroundSize: "auto",
         backgroundPosition: "center",
       }}
     >
@@ -21,7 +21,7 @@ function TreatBar() {
         
         <div>
           <h1 className="text-2xl font-bold">ORA’s Treats</h1>
-          <h4 className="text-sm font-light">Recipe Finder</h4>
+          <h3 className="text-sm font-light">Recipe Finder</h3>
         </div>
 
         <button
@@ -43,7 +43,7 @@ function TreatBar() {
       </nav>
 
       {isOpen && (
-        <ul className="sm:hidden flex flex-col items-center gap-4 mt-4 font-medium bg-black/70 p-4 rounded-lg mx-6 z-20 relative">
+        <ul className="sm:hidden flex flex-col items-center gap-4 mt-4 font-medium p-4 rounded-lg mx-6 z-20 relative">
           <li><Link to="/" onClick={() => setIsOpen(false)}>Kitchen</Link></li>
           <li><Link to="/treats" onClick={() => setIsOpen(false)}>Treats</Link></li>
           <li><Link to="/about" onClick={() => setIsOpen(false)}>Behind the Treats</Link></li>

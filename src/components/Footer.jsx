@@ -3,7 +3,7 @@ import { FaFacebook, FaInstagram } from "react-icons/fa";
 
 function Footer() {
   return (
-    <footer className="bg-green-600 text-white py-6 mt-10">
+    <footer>
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between px-6">
         
         <h2 className="text-xl font-bold">ORA's Treats 2025</h2>
@@ -15,7 +15,7 @@ function Footer() {
             rel="noopener noreferrer"
             className="hover:text-gray-200 transition"
           >
-            <FaFacebook size={24} />
+            <FaFacebook size={28} />
           </a>
 
           <a
@@ -24,7 +24,7 @@ function Footer() {
             rel="noopener noreferrer"
             className="hover:text-gray-200 transition"
           >
-            <FaInstagram size={24} />
+            <FaInstagram size={28} />
           </a>
         </div>
       </div>
