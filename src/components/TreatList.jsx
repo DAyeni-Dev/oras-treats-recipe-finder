@@ -18,7 +18,8 @@ function TreatList({ treats }) {
           placeholder="Search treats..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-[32rem] max-w-full px-6 py-3 text-lg border rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="w-[32rem] max-w-full px-6 py-3 text-lg border
+           rounded-xl shadow-md focus:outline-none "
         />
       </div>
 

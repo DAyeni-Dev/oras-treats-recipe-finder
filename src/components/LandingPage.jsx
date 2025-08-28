@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function LandingPage() {
+ function LandingPage() {
   return (
     <div className="flex flex-col h-screen justify-between  overflow-hidden">
       <main className="flex flex-col items-center justify-center text-center ">
@@ -31,3 +31,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
+export default LandingPage;
