@@ -6,6 +6,8 @@ import TreatList from "./components/TreatList";
 import TreatDetails from "./components/TreatDetails";
 import LandingPage from "./components/LandingPage"; 
 import MarketBasket from"./components/MarketBasket";
+import About from "./components/About";
+import Contact from "./components/Contact";
 
 function App() {
   const [treats, setTreats] = useState([]);
@@ -33,6 +35,8 @@ function App() {
           <Route path="/treats" element={<TreatList treats={treats} />} />
           <Route path="/treat/:id" element={<TreatDetails />} />
           <Route path="/grocerylist" element={<MarketBasket />} />
+          <Route path="/about" element={<About />} />
+         <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
 

@@ -33,24 +33,24 @@ function TreatBar() {
 
         <ul className="hidden sm:flex gap-8 font-medium">
           <li><Link to="/" className="hover:text-green-400">Kitchen</Link></li>
+           <li><Link to="/about" className="hover:text-green-400">Behind the Treats</Link></li>
           <li><Link to="/treats" className="hover:text-green-400">Treats</Link></li>
-          <li><Link to="/about" className="hover:text-green-400">Behind the Treats</Link></li>
-          <li><Link to="/contact" className="hover:text-green-400">Join the Banquet</Link></li>
           <li><Link to="/favorites" className="hover:text-green-400">Flavor Vault</Link></li>
           <li><Link to="/planner" className="hover:text-green-400">Treat Map</Link></li>
           <li><Link to="/grocerylist" className="hover:text-green-400">Market Basket</Link></li>
+           <li><Link to="/contact" className="hover:text-green-400">Join the Banquet</Link></li>
         </ul>
       </nav>
 
       {isOpen && (
         <ul className="sm:hidden flex flex-col items-center gap-4 mt-4 font-medium p-4 rounded-lg mx-6 z-20 relative">
           <li><Link to="/" onClick={() => setIsOpen(false)}>Kitchen</Link></li>
+           <li><Link to="/about" onClick={() => setIsOpen(false)}>Behind the Treats</Link></li>
           <li><Link to="/treats" onClick={() => setIsOpen(false)}>Treats</Link></li>
-          <li><Link to="/about" onClick={() => setIsOpen(false)}>Behind the Treats</Link></li>
-          <li><Link to="/contact" onClick={() => setIsOpen(false)}>Join the Banquet</Link></li>
           <li><Link to="/favorites" onClick={() => setIsOpen(false)}>Flavor Vault</Link></li>
           <li><Link to="/planner" onClick={() => setIsOpen(false)}>Treat Map</Link></li>
           <li><Link to="/grocerylist" onClick={() => setIsOpen(false)}>Market Basket</Link></li>
+          <li><Link to="/contact" onClick={() => setIsOpen(false)}>Join the Banquet</Link></li>
         </ul>
       )}
 
