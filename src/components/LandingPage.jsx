@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
  function LandingPage() {
   return (
-    <div className="flex flex-col h-screen justify-between  overflow-hidden">
+    <div className="flex flex-col  justify-between  overflow-hidden">
       <main className="flex flex-col items-center justify-center text-center ">
         <h1 className="text-5xl font-extrabold mb-8">
           Welcome to ORA's Treats

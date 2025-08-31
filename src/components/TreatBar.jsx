@@ -1,6 +1,6 @@
 import { useState } from "react"; 
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+
 import bgImage from "../assets/images/ora-logo-white.png";
 
 function TreatBar() {
@@ -28,7 +28,7 @@ function TreatBar() {
           className="sm:hidden p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <i className=" text [20px] bi bi-x"></i>: <i className=" text-[20px] bi bi-list"></i>} 
         </button>
 
         <ul className="hidden sm:flex gap-8 font-medium">
