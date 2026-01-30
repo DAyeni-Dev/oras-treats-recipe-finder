@@ -1,67 +1,91 @@
-import { useState } from "react"; 
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { BiX } from "react-icons/bi";
+import logo from "../assets/images/ora-logo-white.png";
 
-import bgImage from "../assets/images/ora-logo-white.png";
-
-function TreatBar() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function TreatBar({ isOpen, onClose }) {
+  const linkClass = ({ isActive }) =>
+    `flex items-center px-6 py-3 transition-colors duration-200 font-medium text-lg ${
+      isActive
+        ? "bg-[#8fbf1a] text-[#005c29] border-r-4 border-[#f93270]"
+        : "text-white hover:bg-[#8fbf1a]/10 hover:text-[#8fbf1a]"
+    }`;
 
   return (
-    <header
-      className="relative w-full min-h-[620px] text-white"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "auto",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="absolute inset-0 bg-black/50"></div>
+    <>
+      {/* Mobile Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={onClose}
+      />
 
-      <nav className="relative z-20 flex justify-between items-center p-6">
-        
-        <div>
-          <h1 className="text-2xl font-bold">ORA’s Treats</h1>
-          <h3 className="text-sm font-light">Recipe Finder</h3>
-        </div>
-
-        <button
-          className="sm:hidden p-2"
-          onClick={() => setIsOpen(!isOpen)}
+      {/* Sidebar */}
+      <aside 
+        className={`
+          w-64 h-screen bg-[#005c29] flex flex-col border-r border-[#8fbf1a]/20 shadow-2xl flex-shrink-0 
+          fixed md:sticky top-0 z-50 transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}
+      >
+        {/* Close Button (Mobile Only) */}
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white hover:text-[#f93270] transition-colors md:hidden z-50"
         >
-          {isOpen ? <i className=" text [20px] bi bi-x"></i>: <i className=" text-[20px] bi bi-list"></i>} 
+          <BiX size={28} />
         </button>
 
-        <ul className="hidden sm:flex gap-8 font-medium">
-          <li><Link to="/" className="hover:text-green-400">Kitchen</Link></li>
-           <li><Link to="/about" className="hover:text-green-400">Behind the Treats</Link></li>
-          <li><Link to="/treats" className="hover:text-green-400">Treats</Link></li>
-          <li><Link to="/favorites" className="hover:text-green-400">Flavor Vault</Link></li>
-          <li><Link to="/planner" className="hover:text-green-400">Treat Map</Link></li>
-          <li><Link to="/grocerylist" className="hover:text-green-400">Market Basket</Link></li>
-           <li><Link to="/contact" className="hover:text-green-400">Join the Banquet</Link></li>
-        </ul>
-      </nav>
+        {/* Logo Section */}
+        <div className="p-8 flex flex-col items-center justify-center border-b border-[#8fbf1a]/20">
+          <Link to="/" className="flex flex-col items-center gap-4 group" onClick={() => onClose && onClose()}>
+            <img
+              src={logo}
+              alt="ORA's Treats Logo"
+              className="h-24 w-24 object-cover rounded-full border-4 border-[#8fbf1a] shadow-lg transition-transform group-hover:scale-105"
+            />
+            <span className="font-bold text-xl tracking-wider transition-colors">
+              <span className="text-[#f93270]">ORA's Tr</span><span className="text-[#8fbf1a]">eats</span>
+            </span>
+          </Link>
+        </div>
 
-      {isOpen && (
-        <ul className="sm:hidden flex flex-col items-center gap-4 mt-4 font-medium p-4 rounded-lg mx-6 z-20 relative">
-          <li><Link to="/" onClick={() => setIsOpen(false)}>Kitchen</Link></li>
-           <li><Link to="/about" onClick={() => setIsOpen(false)}>Behind the Treats</Link></li>
-          <li><Link to="/treats" onClick={() => setIsOpen(false)}>Treats</Link></li>
-          <li><Link to="/favorites" onClick={() => setIsOpen(false)}>Flavor Vault</Link></li>
-          <li><Link to="/planner" onClick={() => setIsOpen(false)}>Treat Map</Link></li>
-          <li><Link to="/grocerylist" onClick={() => setIsOpen(false)}>Market Basket</Link></li>
-          <li><Link to="/contact" onClick={() => setIsOpen(false)}>Join the Banquet</Link></li>
-        </ul>
-      )}
+        {/* Navigation Links */}
+        <nav className="flex-1 py-10 flex flex-col space-y-4 overflow-y-auto">
+          <NavLink to="/" className={linkClass} onClick={() => onClose && onClose()}>
+            Kitchen
+          </NavLink>
+          <NavLink to="/about" className={linkClass} onClick={() => onClose && onClose()}>
+            Behind the Treats
+          </NavLink>
+          <NavLink to="/treats" className={linkClass} onClick={() => onClose && onClose()}>
+            Treats
+          </NavLink>
+          <NavLink to="/favorites" className={linkClass} onClick={() => onClose && onClose()}>
+            Flavor Vault
+          </NavLink>
+          <NavLink to="/planner" className={linkClass} onClick={() => onClose && onClose()}>
+            Treat Map
+          </NavLink>
+          <NavLink to="/grocerylist" className={linkClass} onClick={() => onClose && onClose()}>
+            Market Basket
+          </NavLink>
+          <NavLink to="/contact" className={linkClass} onClick={() => onClose && onClose()}>
+            Join the Banquet
+          </NavLink>
+        </nav>
 
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        <h2 className="text-4xl font-bold mt-2">Discover, Plan & Savor Every Meal</h2>
-        <p className="mt-4 text-lg font-mono max-w-xl">
-          Find delicious recipes, plan your meals, and shop smarter with ORA’s Treat Recipes.
-        </p>
-      </div>
-    </header>
+        {/* Promo Section */}
+        <div className="p-6 text-center border-t border-[#8fbf1a]/20 bg-[#004a21]">
+          <h2 className="text-xl font-bold text-white leading-tight">
+            Discover, Plan & <span className="text-[#f93270]">Savor</span> Every <span className="text-[#8fbf1a]">Meal</span>
+          </h2>
+          <p className="mt-3 text-xs font-sans text-white/80">
+            Find delicious recipes, plan your meals, and shop smarter with <span className="text-[#f93270]">ORA's Tr</span><span className="text-[#8fbf1a]">eats</span>.
+          </p>
+        </div>
+
+      </aside>
+    </>
   );
 }
-
-export default TreatBar;

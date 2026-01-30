@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
- @import "bootstrap-icons/font/bootstrap-icons.css";
+.font-chewy {
+  font-family: 'Chewy', system-ui;
+}
