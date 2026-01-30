@@ -7,8 +7,7 @@ export default function About() {
     <div className="relative min-h-screen bg-white">
       
       <div className="max-w-4xl mx-auto px-6 py-12 md:py-20">
-        
-        {/* Header Section */}
+      
         <div className="text-center mb-16">
           <h1 className="text-5xl font-chewy text-[#005c29] mb-6">
             About <span className="text-[#f93270]">ORA's Tr</span><span className="text-[#8fbf1a]">eats</span> Recipe Finder
@@ -18,7 +17,7 @@ export default function About() {
           </p>
         </div>
 
-        {/* Vision Section */}
+        
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
           <div className="space-y-6">
              <h2 className="text-3xl font-bold text-[#8fbf1a] mb-4">More Than Just Recipes</h2>
@@ -35,7 +34,7 @@ export default function About() {
           </div>
         </div>
 
-        {/* Features Section */}
+        
         <div className="bg-[#005c29] text-white rounded-3xl p-10 md:p-16 mb-20 shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#8fbf1a]/20 rounded-full -translate-y-1/2 translate-x-1/3"></div>
           
@@ -74,7 +73,7 @@ export default function About() {
           </div>
         </div>
 
-        {/* Mission/Conclusion Section */}
+        
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-[#005c29] mb-6">Our Goal is Simple</h2>
           <p className="text-gray-700 leading-relaxed text-lg mb-8">
