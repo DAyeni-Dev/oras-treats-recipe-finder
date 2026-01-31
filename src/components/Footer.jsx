@@ -12,7 +12,7 @@ export default function Footer() {
             <span className="text-[#f93270]">ORA's Tr</span><span className="text-[#8fbf1a]">eats</span>
           </h3>
           <p className="text-xs opacity-80 mt-1 max-w-xs">
-             Cook with love!
+             Savor the Treat!
           </p>
         </div>
 
