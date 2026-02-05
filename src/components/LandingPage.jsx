@@ -26,7 +26,7 @@ function LandingPage() {
 
         <div className="space-y-4 text-base md:text-lg text-gray-800 leading-relaxed max-w-2xl font-medium">
           <p>
-            Cooking should be fun, messy, and delicious! 
+            Cooking should be fun and delicious! 
             Find your next obsession, turn "nothing to eat" into a feast, 
             and plan meals that make you smile.
           </p>

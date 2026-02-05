@@ -12,7 +12,7 @@ export default function TreatBar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Mobile Overlay */}
+     
       <div 
         className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -20,7 +20,6 @@ export default function TreatBar({ isOpen, onClose }) {
         onClick={onClose}
       />
 
-      {/* Sidebar */}
       <aside 
         className={`
           w-64 h-screen bg-[#005c29] flex flex-col border-r border-[#8fbf1a]/20 shadow-2xl flex-shrink-0 
@@ -28,7 +27,6 @@ export default function TreatBar({ isOpen, onClose }) {
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
       >
-        {/* Close Button (Mobile Only) */}
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-white hover:text-[#f93270] transition-colors md:hidden z-50"
@@ -36,7 +34,6 @@ export default function TreatBar({ isOpen, onClose }) {
           <BiX size={28} />
         </button>
 
-        {/* Logo Section */}
         <div className="p-8 flex flex-col items-center justify-center border-b border-[#8fbf1a]/20">
           <Link to="/" className="flex flex-col items-center gap-4 group" onClick={() => onClose && onClose()}>
             <img
@@ -50,7 +47,6 @@ export default function TreatBar({ isOpen, onClose }) {
           </Link>
         </div>
 
-        {/* Navigation Links */}
         <nav className="flex-1 py-10 flex flex-col space-y-4 overflow-y-auto">
           <NavLink to="/" className={linkClass} onClick={() => onClose && onClose()}>
             Kitchen
@@ -75,7 +71,6 @@ export default function TreatBar({ isOpen, onClose }) {
           </NavLink>
         </nav>
 
-        {/* Promo Section */}
         <div className="p-6 text-center border-t border-[#8fbf1a]/20 bg-[#004a21]">
           <h2 className="text-xl font-bold text-white leading-tight">
             Discover, Plan & <span className="text-[#f93270]">Savor</span> Every <span className="text-[#8fbf1a]">Meal</span>
