@@ -5,7 +5,7 @@ import drinksData from '../data/drinks.json';
 
 function Treats() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("Dessert"); // Default to Dessert for "Treats" theme
+  const [currentCategory, setCurrentCategory] = useState("Dessert");
   const [treats, setTreats] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ function Treats() {
 
     const delayDebounceFn = setTimeout(() => {
       
-      if (activeFilter === 'Drinks') {
+      if (currentCategory === 'Drinks') {
         const filteredDrinks = drinksData.filter(drink => {
             if (!searchTerm) return true;
             return drink.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -54,7 +54,7 @@ function Treats() {
         if (searchTerm) {
           url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`;
         } else {
-          const categoryToFetch = activeFilter === "All" ? "Dessert" : activeFilter;
+          const categoryToFetch = currentCategory === "All" ? "Dessert" : currentCategory;
           url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${categoryToFetch}`;
         }
 
@@ -78,7 +78,7 @@ function Treats() {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, activeFilter]);
+  }, [searchTerm, currentCategory]);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
@@ -98,41 +98,46 @@ function Treats() {
             <input
               type="text"
               placeholder={
-                activeFilter === 'Drinks' ? "Search for a Drink... (e.g., Margarita, Cola)" :
-                "What are you craving? (e.g., cake, pasta...)"
+                currentCategory === 'Drinks' 
+                  ? "Search for refreshing drinks..." 
+                  : "Search for tasty treats..."
               }
-              className="w-full px-6 py-4 pl-12 rounded-full text-gray-700 bg-white shadow-lg focus:outline-none focus:ring-4 focus:ring-[#8fbf1a]/50 transition-all text-lg"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 rounded-full border-0 shadow-lg text-gray-700 focus:ring-4 focus:ring-[#f93270]/20 focus:outline-none text-lg"
             />
-            <BiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-2xl" />
+            <BiSearch className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-2xl" />
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3 mt-8">
+             <button
+                onClick={() => setCurrentCategory("All")}
+                className={`px-5 py-2 rounded-full font-medium transition-all transform hover:-translate-y-1 ${
+                  currentCategory === "All"
+                    ? "bg-[#f93270] text-white shadow-lg scale-105"
+                    : "bg-white text-gray-600 hover:bg-gray-100 shadow-sm"
+                }`}
+              >
+                All
+              </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.idCategory}
+                onClick={() => setCurrentCategory(cat.strCategory)}
+                className={`px-5 py-2 rounded-full font-medium transition-all transform hover:-translate-y-1 ${
+                  currentCategory === cat.strCategory
+                    ? "bg-[#f93270] text-white shadow-lg scale-105"
+                    : "bg-white text-gray-600 hover:bg-gray-100 shadow-sm"
+                }`}
+              >
+                {cat.strCategory}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-          <div className="flex items-center gap-2 mr-2 text-gray-500 font-medium">
-             <BiFilter /> Filters:
-          </div>
-          {categories.map(cat => (
-            <button
-              key={cat.idCategory}
-              onClick={() => {
-                setActiveFilter(cat.strCategory);
-                setSearchTerm("");
-              }}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
-                activeFilter === cat.strCategory && (activeFilter === 'Drinks' || !searchTerm)
-                  ? 'bg-[#f93270] text-white shadow-md transform scale-105' 
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              {cat.strCategory}
-            </button>
-          ))}
-        </div>
 
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
@@ -158,7 +163,7 @@ function Treats() {
                   title={treat.strMeal}
                   image={treat.strMealThumb}
                   tags={[
-                    treat.strCategory || activeFilter, 
+                    treat.strCategory || currentCategory, 
                     treat.strArea,
                     ...(treat.strTags ? treat.strTags.split(',') : [])
                   ].filter(Boolean).slice(0, 3)}
@@ -168,7 +173,7 @@ function Treats() {
           ) : (
             <div className="text-center py-20">
                    <h3 className="text-2xl font-bold text-gray-700 mb-2">
-                {activeFilter === 'Drinks' ? "No drinks found!" : "No treats found!"}
+                {currentCategory === 'Drinks' ? "No drinks found!" : "No treats found!"}
               </h3>
               <p className="text-gray-500">Try adjusting your search or filters.</p>
             </div>

@@ -1,65 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { BiTrash, BiCheck, BiShoppingBag, BiArrowBack, BiPlus } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
+import { useNotification } from '../context/NotificationContext';
 
 function MarketBasket() {
-  const [basket, setBasket] = useState([]);
-  const [newItemName, setNewItemName] = useState("");
-  const [newItemMeasure, setNewItemMeasure] = useState("");
-  const [newItemCategory, setNewItemCategory] = useState("");
+  const { showNotification } = useNotification();
+  const [shoppingList, setShoppingList] = useState([]);
+  const [basketItemName, setBasketItemName] = useState("");
+  const [basketItemMeasure, setBasketItemMeasure] = useState("");
+  const [basketItemCategory, setBasketItemCategory] = useState("");
 
   useEffect(() => {
     const savedBasket = localStorage.getItem('marketBasket');
     if (savedBasket) {
-      setBasket(JSON.parse(savedBasket));
+      setShoppingList(JSON.parse(savedBasket));
     }
   }, []);
 
   const updateBasket = (newBasket) => {
-    setBasket(newBasket);
+    setShoppingList(newBasket);
     localStorage.setItem('marketBasket', JSON.stringify(newBasket));
   };
 
   const addItem = (e) => {
     e.preventDefault();
-    if (!newItemName.trim()) return;
+    if (!basketItemName.trim()) return;
 
     const newItem = {
       id: Date.now(),
-      ingredient: newItemName,
-      measure: newItemMeasure,
-      recipe: newItemCategory.trim() || "My Personal List",
-      recipeId: "custom",
+      ingredient: basketItemName,
+      measure: basketItemMeasure,
+      recipe: basketItemCategory.trim() || "My Personal List",
+      recipeId: "personal_entry",
       checked: false
     };
 
-    const newBasket = [...basket, newItem];
+    const newBasket = [...shoppingList, newItem];
     updateBasket(newBasket);
-    setNewItemName("");
-    setNewItemMeasure("");
-    
+    setBasketItemName("");
+    setBasketItemMeasure("");
+    showNotification(`Added ${basketItemName} to your basket!`);
   };
 
   const toggleItem = (id) => {
-    const newBasket = basket.map(item => 
+    const newBasket = shoppingList.map(item => 
       item.id === id ? { ...item, checked: !item.checked } : item
     );
     updateBasket(newBasket);
   };
 
   const removeItem = (id) => {
-    const newBasket = basket.filter(item => item.id !== id);
+    const itemToRemove = shoppingList.find(item => item.id === id);
+    const newBasket = shoppingList.filter(item => item.id !== id);
     updateBasket(newBasket);
+    showNotification(`Removed ${itemToRemove?.ingredient || 'item'} from basket`, 'error');
   };
 
   const clearBasket = () => {
     if (window.confirm('Are you sure you want to clear your basket?')) {
       updateBasket([]);
+      showNotification('Basket cleared', 'error');
     }
   };
 
+  const removeChecked = () => {
+    if (window.confirm('Remove all checked items?')) {
+      const newBasket = shoppingList.filter(item => !item.checked);
+      updateBasket(newBasket);
+      showNotification('Checked items removed', 'error');
+    }
+  };
+
+  const shareList = () => {
+    const text = shoppingList.map(item => 
+      `${item.checked ? '[x]' : '[ ]'} ${item.ingredient} ${item.measure ? `(${item.measure})` : ''} - ${item.recipe}`
+    ).join('\n');
+    
+    navigator.clipboard.writeText(`My Market Basket:\n\n${text}`)
+      .then(() => showNotification('List copied to clipboard!', 'info'))
+      .catch(err => console.error('Failed to copy:', err));
+  };
   
-  const groupedItems = basket.reduce((acc, item) => {
+  const groupedItems = shoppingList.reduce((acc, item) => {
     if (!acc[item.recipe]) {
       acc[item.recipe] = [];
     }
@@ -86,7 +108,6 @@ function MarketBasket() {
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         
-        
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-8">
           <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
             <BiPlus className="text-[#f93270]" /> Add Your Own Item
@@ -95,27 +116,27 @@ function MarketBasket() {
             <input
               type="text"
               placeholder="List Name (e.g., Office Party)"
-              value={newItemCategory}
-              onChange={(e) => setNewItemCategory(e.target.value)}
+              value={basketItemCategory}
+              onChange={(e) => setBasketItemCategory(e.target.value)}
               className="md:w-64 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8fbf1a]"
             />
             <input
               type="text"
               placeholder="Item name (e.g., Milk)"
-              value={newItemName}
-              onChange={(e) => setNewItemName(e.target.value)}
+              value={basketItemName}
+              onChange={(e) => setBasketItemName(e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8fbf1a]"
             />
             <input
               type="text"
               placeholder="Amount (optional)"
-              value={newItemMeasure}
-              onChange={(e) => setNewItemMeasure(e.target.value)}
+              value={basketItemMeasure}
+              onChange={(e) => setBasketItemMeasure(e.target.value)}
               className="md:w-48 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8fbf1a]"
             />
             <button 
               type="submit"
-              disabled={!newItemName.trim()}
+              disabled={!basketItemName.trim()}
               className="px-6 py-2 bg-[#005c29] text-white font-bold rounded-lg hover:bg-[#004a21] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add Item
@@ -123,7 +144,7 @@ function MarketBasket() {
           </form>
         </div>
 
-        {basket.length === 0 ? (
+        {shoppingList.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl shadow-lg border border-gray-100">
             <div className="text-6xl mb-6 text-[#8fbf1a]">🧺</div>
             <h3 className="text-2xl font-bold text-gray-700 mb-3">Your basket is empty</h3>
@@ -137,16 +158,35 @@ function MarketBasket() {
           </div>
         ) : (
           <>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
               <div className="text-gray-600 font-medium">
-                {basket.filter(i => i.checked).length} / {basket.length} items collected
+                {shoppingList.filter(i => i.checked).length} / {shoppingList.length} items collected
               </div>
-              <button 
-                onClick={clearBasket}
-                className="text-red-500 hover:text-red-700 font-bold text-sm flex items-center gap-1 px-4 py-2 hover:bg-red-50 rounded-full transition-colors"
-              >
-                <BiTrash /> Clear All
-              </button>
+              
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={shareList}
+                  className="text-[#005c29] hover:text-[#004a21] font-bold text-sm flex items-center gap-1 px-4 py-2 bg-[#8fbf1a]/10 hover:bg-[#8fbf1a]/20 rounded-full transition-colors"
+                >
+                  <BiShoppingBag /> Share List
+                </button>
+                
+                {shoppingList.some(i => i.checked) && (
+                  <button 
+                    onClick={removeChecked}
+                    className="text-orange-500 hover:text-orange-700 font-bold text-sm flex items-center gap-1 px-4 py-2 hover:bg-orange-50 rounded-full transition-colors"
+                  >
+                    <BiCheck /> Clear Checked
+                  </button>
+                )}
+
+                <button 
+                  onClick={clearBasket}
+                  className="text-red-500 hover:text-red-700 font-bold text-sm flex items-center gap-1 px-4 py-2 hover:bg-red-50 rounded-full transition-colors"
+                >
+                  <BiTrash /> Clear All
+                </button>
+              </div>
             </div>
 
             <div className="space-y-6">

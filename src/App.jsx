@@ -5,6 +5,7 @@ import About from "./components/About";
 import Treats from "./components/Treats";
 import TreatDetails from "./components/TreatDetails";
 import MarketBasket from "./components/MarketBasket";
+import Favorites from "./components/Favorites";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="treats" element={<Treats />} />
         <Route path="treats/:id" element={<TreatDetails />} />
+        <Route path="favorites" element={<Favorites />} />
         <Route path="grocerylist" element={<MarketBasket />} />
       </Route>
     </Routes>

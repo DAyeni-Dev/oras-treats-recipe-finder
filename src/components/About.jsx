@@ -22,8 +22,8 @@ export default function About() {
           <div className="space-y-6">
              <h2 className="text-3xl font-bold text-[#8fbf1a] mb-4">More Than Just Recipes</h2>
              <p className="text-gray-700 leading-relaxed text-lg">
-               <span className="text-[#f93270]">ORA's Tr</span><span className="text-[#8fbf1a]">eats</span>
-                Recipe Finder is more than just a recipe app, it’s your personal 
+               <span className="text-[#f93270]">ORA's Tr</span><span className="text-[#8fbf1a]">eats</span> 
+               Recipe Finder is more than just a recipe app, it’s your personal 
                kitchen assistant designed to make cooking fun, stress-free, and creative. 
                Whether you’re a beginner learning your way around the kitchen or a seasoned 
                cook looking for fresh inspiration, this app helps you discover new meals, 

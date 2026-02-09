@@ -1,14 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { BiArrowBack, BiTime, BiDish, BiDrink, BiPlus, BiShoppingBag, BiCheck } from 'react-icons/bi';
+import { BiArrowBack, BiTime, BiDish, BiDrink, BiPlus, BiShoppingBag, BiCheck, BiHeart, BiSolidHeart } from 'react-icons/bi';
 import drinksData from '../data/drinks.json';
+import { useNotification } from '../context/NotificationContext';
 
 function TreatDetails() {
+  const { showNotification } = useNotification();
   const { id } = useParams();
   const [treat, setTreat] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDrink, setIsDrink] = useState(false);
   const [addedItems, setAddedItems] = useState({});
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setIsFavorite(favorites.some(fav => fav.id === id));
+  }, [id]);
+
+  const toggleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    let newFavorites;
+
+    if (isFavorite) {
+      newFavorites = favorites.filter(fav => fav.id !== id);
+      showNotification('Removed from Favorites', 'info');
+    } else {
+      const tags = [
+        treat.strCategory, 
+        isDrink ? treat.strGlass : treat.strArea,
+        ...(treat.strTags ? treat.strTags.split(',') : [])
+      ].filter(Boolean).slice(0, 3);
+
+      const newFavorite = {
+        id,
+        title: treat.strMeal || treat.strDrink,
+        image: treat.strMealThumb || treat.strDrinkThumb,
+        tags
+      };
+      newFavorites = [...favorites, newFavorite];
+      showNotification('Added to Favorites!');
+    }
+
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    setIsFavorite(!isFavorite);
+  };
 
   const addToBasket = (ingredient, measure) => {
     const newItem = {
@@ -25,33 +61,38 @@ function TreatDetails() {
     localStorage.setItem('marketBasket', JSON.stringify(newBasket));
 
     setAddedItems(prev => ({ ...prev, [ingredient]: true }));
+    showNotification(`Added ${ingredient} to basket`);
     setTimeout(() => {
       setAddedItems(prev => ({ ...prev, [ingredient]: false }));
     }, 2000);
   };
 
-  const addAllToBasket = () => {
-    const ingredientsToAdd = [];
+  const getIngredients = (treatData) => {
+    const ingredients = [];
     for (let i = 1; i <= 20; i++) {
-      const ingredient = treat[`strIngredient${i}`];
-      const measure = treat[`strMeasure${i}`];
+      const ingredient = treatData[`strIngredient${i}`];
+      const measure = treatData[`strMeasure${i}`];
       if (ingredient && ingredient.trim() !== "") {
-        ingredientsToAdd.push({
+        ingredients.push({
           id: Date.now() + Math.random() + i,
           ingredient,
           measure,
-          recipe: treat.strMeal || treat.strDrink,
+          recipe: treatData.strMeal || treatData.strDrink,
           recipeId: id,
           checked: false
         });
       }
     }
+    return ingredients;
+  };
 
+  const addAllToBasket = () => {
+    const ingredientsToAdd = getIngredients(treat);
     const currentBasket = JSON.parse(localStorage.getItem('marketBasket') || '[]');
     const newBasket = [...currentBasket, ...ingredientsToAdd];
     localStorage.setItem('marketBasket', JSON.stringify(newBasket));
     
-    alert('All ingredients added to your Market Basket!');
+    showNotification('All ingredients added to your Market Basket!');
   };
 
   useEffect(() => {
@@ -120,14 +161,7 @@ function TreatDetails() {
     );
   }
 
-  const ingredients = [];
-  for (let i = 1; i <= 20; i++) {
-    const ingredient = treat[`strIngredient${i}`];
-    const measure = treat[`strMeasure${i}`];
-    if (ingredient && ingredient.trim() !== "") {
-      ingredients.push({ ingredient, measure });
-    }
-  }
+  const ingredientsList = treat ? getIngredients(treat) : [];
 
   const title = treat.strMeal || treat.strDrink;
   const image = treat.strMealThumb || treat.strDrinkThumb;
@@ -151,7 +185,21 @@ function TreatDetails() {
             <Link to="/treats" className="inline-flex items-center gap-2 text-white/80 hover:text-[#8fbf1a] mb-4 transition-colors">
               <BiArrowBack /> Back to Treats
             </Link>
-            <h1 className="text-4xl md:text-5xl font-chewy tracking-wide mb-2">{title}</h1>
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-4xl md:text-5xl font-chewy tracking-wide">{title}</h1>
+              <button 
+                onClick={toggleFavorite}
+                className="p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all transform hover:scale-110"
+                title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              >
+                {isFavorite ? (
+                  <BiSolidHeart className="text-[#f93270] text-2xl md:text-3xl" />
+                ) : (
+                  <BiHeart className="text-white text-2xl md:text-3xl" />
+                )}
+              </button>
+            </div>
+            
             <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm md:text-base mt-4">
               <span className="bg-[#f93270] px-3 py-1 rounded-full font-bold">{category}</span>
               
@@ -175,7 +223,7 @@ function TreatDetails() {
           <div className="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-[#8fbf1a]">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-[#005c29] flex items-center gap-2">
-                 Ingredients
+                 Treats List
               </h3>
               <button 
                 onClick={addAllToBasket}
@@ -185,7 +233,7 @@ function TreatDetails() {
               </button>
             </div>
             <ul className="space-y-3">
-              {ingredients.map((item, index) => (
+              {ingredientsList.map((item, index) => (
                 <li key={index} className="flex justify-between items-center text-sm border-b border-gray-100 pb-2 last:border-0 group">
                   <div className="flex-1">
                     <span className="font-medium text-gray-700 block">{item.ingredient}</span>
@@ -214,7 +262,7 @@ function TreatDetails() {
         <div className="md:col-span-2">
           <div className="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-[#f93270]">
             <h3 className="text-2xl font-bold text-[#005c29] mb-6 font-chewy tracking-wide">
-               Instructions
+               How to treat yourself
             </h3>
             <div className="space-y-4 text-gray-700 leading-relaxed">
               {instructions.split('\r\n').filter(Boolean).map((step, index) => (
