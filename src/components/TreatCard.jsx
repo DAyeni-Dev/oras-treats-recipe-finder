@@ -35,6 +35,8 @@ function TreatCard({ id, title, image, tags, onToggle }) {
     }
   };
 
+  const safeTags = Array.isArray(tags) ? tags : [];
+
   return (
     <div className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full transform hover:-translate-y-1">
       <Link to={`/treats/${id}`} className="flex flex-col h-full">
@@ -62,7 +64,7 @@ function TreatCard({ id, title, image, tags, onToggle }) {
           </h3>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {tags?.map((tag, index) => (
+            {safeTags.map((tag, index) => (
               <span key={index} className="px-2 py-1 bg-[#8fbf1a]/10 text-[#5a7a10] text-xs font-medium rounded-md">
                 {tag}
               </span>

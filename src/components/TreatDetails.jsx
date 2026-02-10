@@ -265,7 +265,7 @@ function TreatDetails() {
                How to treat yourself
             </h3>
             <div className="space-y-4 text-gray-700 leading-relaxed">
-              {instructions.split('\r\n').filter(Boolean).map((step, index) => (
+              {(instructions || "").split('\r\n').filter(Boolean).map((step, index) => (
                 <p key={index} className="mb-4 last:mb-0">
                   {step}
                 </p>

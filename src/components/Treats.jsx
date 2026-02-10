@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { BiSearch, BiFilter, BiLoaderAlt } from 'react-icons/bi';
+import { BiSearch, BiFilter, BiLoaderAlt, BiGlobe } from 'react-icons/bi';
+import { motion, AnimatePresence } from 'framer-motion';
 import TreatCard from './TreatCard';
 import drinksData from '../data/drinks.json';
 
 function Treats() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentCategory, setCurrentCategory] = useState("Dessert");
+  const [currentArea, setCurrentArea] = useState("");
   const [treats, setTreats] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Fetch Categories
     fetch('https://www.themealdb.com/api/json/v1/1/categories.php')
       .then(res => res.json())
       .then(data => {
@@ -22,6 +26,16 @@ function Treats() {
         }
       })
       .catch(err => console.error("Error fetching categories:", err));
+
+    // Fetch Areas
+    fetch('https://www.themealdb.com/api/json/v1/1/list.php?a=list')
+      .then(res => res.json())
+      .then(data => {
+        if (data.meals) {
+          setAreas(data.meals);
+        }
+      })
+      .catch(err => console.error("Error fetching areas:", err));
   }, []);
 
   useEffect(() => {
@@ -31,7 +45,7 @@ function Treats() {
 
     const delayDebounceFn = setTimeout(() => {
       
-      if (currentCategory === 'Drinks') {
+      if (currentCategory === 'Drinks' && !currentArea) {
         const filteredDrinks = drinksData.filter(drink => {
             if (!searchTerm) return true;
             return drink.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -53,6 +67,8 @@ function Treats() {
         let url = '';
         if (searchTerm) {
           url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`;
+        } else if (currentArea) {
+          url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${currentArea}`;
         } else {
           const categoryToFetch = currentCategory === "All" ? "Dessert" : currentCategory;
           url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${categoryToFetch}`;
@@ -78,7 +94,19 @@ function Treats() {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, currentCategory]);
+  }, [searchTerm, currentCategory, currentArea]);
+
+  const handleCategoryClick = (cat) => {
+    setCurrentCategory(cat);
+    setCurrentArea(""); // Reset area when category is selected
+    setSearchTerm("");
+  };
+
+  const handleAreaClick = (area) => {
+    setCurrentArea(area);
+    setCurrentCategory("All"); // Reset visual category
+    setSearchTerm("");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
@@ -109,30 +137,44 @@ function Treats() {
             <BiSearch className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-2xl" />
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-             <button
-                onClick={() => setCurrentCategory("All")}
-                className={`px-5 py-2 rounded-full font-medium transition-all transform hover:-translate-y-1 ${
-                  currentCategory === "All"
-                    ? "bg-[#f93270] text-white shadow-lg scale-105"
-                    : "bg-white text-gray-600 hover:bg-gray-100 shadow-sm"
-                }`}
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <div className="relative group">
+              <BiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg z-10" />
+              <select 
+                value={currentCategory}
+                onChange={(e) => handleCategoryClick(e.target.value)}
+                className="appearance-none w-full pl-12 pr-12 py-3 rounded-full border-0 shadow-lg text-gray-700 font-medium focus:ring-4 focus:ring-[#f93270]/20 focus:outline-none cursor-pointer min-w-[200px] bg-white transition-transform hover:scale-105"
               >
-                All
-              </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.idCategory}
-                onClick={() => setCurrentCategory(cat.strCategory)}
-                className={`px-5 py-2 rounded-full font-medium transition-all transform hover:-translate-y-1 ${
-                  currentCategory === cat.strCategory
-                    ? "bg-[#f93270] text-white shadow-lg scale-105"
-                    : "bg-white text-gray-600 hover:bg-gray-100 shadow-sm"
-                }`}
+                <option value="All" className="text-gray-700">All Types</option>
+                {categories.map((cat) => (
+                  <option key={cat.idCategory} value={cat.strCategory} className="text-gray-700">
+                    {cat.strCategory}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">
+                ▼
+              </div>
+            </div>
+
+            <div className="relative group">
+              <BiGlobe className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg z-10" />
+              <select 
+                value={currentArea}
+                onChange={(e) => handleAreaClick(e.target.value)}
+                className="appearance-none w-full pl-12 pr-12 py-3 rounded-full border-0 shadow-lg text-gray-700 font-medium focus:ring-4 focus:ring-[#f93270]/20 focus:outline-none cursor-pointer min-w-[200px] bg-white transition-transform hover:scale-105"
               >
-                {cat.strCategory}
-              </button>
-            ))}
+                <option value="" className="text-gray-700">All Cuisines</option>
+                {areas.map(area => (
+                  <option key={area.strArea} value={area.strArea} className="text-gray-700">
+                    {area.strArea}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">
+                ▼
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -155,21 +197,34 @@ function Treats() {
 
         {!loading && !error && (
           treats.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {treats.map(treat => (
-                <TreatCard 
-                  key={treat.idMeal} 
-                  id={treat.idMeal}
-                  title={treat.strMeal}
-                  image={treat.strMealThumb}
-                  tags={[
-                    treat.strCategory || currentCategory, 
-                    treat.strArea,
-                    ...(treat.strTags ? treat.strTags.split(',') : [])
-                  ].filter(Boolean).slice(0, 3)}
-                />
-              ))}
-            </div>
+            <motion.div 
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              <AnimatePresence mode='popLayout'>
+                {treats.map(treat => (
+                  <motion.div
+                    key={treat.idMeal}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <TreatCard 
+                      id={treat.idMeal}
+                      title={treat.strMeal}
+                      image={treat.strMealThumb}
+                      tags={[
+                        treat.strCategory || currentCategory, 
+                        treat.strArea,
+                        ...(treat.strTags ? treat.strTags.split(',') : [])
+                      ].filter(Boolean).slice(0, 3)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           ) : (
             <div className="text-center py-20">
                    <h3 className="text-2xl font-bold text-gray-700 mb-2">
