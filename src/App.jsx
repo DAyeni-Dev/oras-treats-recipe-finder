@@ -6,6 +6,7 @@ import Treats from "./components/Treats";
 import TreatDetails from "./components/TreatDetails";
 import MarketBasket from "./components/MarketBasket";
 import Favorites from "./components/Favorites";
+import MealPlanner from "./components/MealPlanner";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="treats" element={<Treats />} />
         <Route path="treats/:id" element={<TreatDetails />} />
         <Route path="favorites" element={<Favorites />} />
+        <Route path="planner" element={<MealPlanner />} />
         <Route path="grocerylist" element={<MarketBasket />} />
       </Route>
     </Routes>

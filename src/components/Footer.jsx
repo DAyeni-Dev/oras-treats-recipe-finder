@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BiLogoFacebook, BiLogoInstagram, BiLogoWhatsapp, BiEnvelope, BiPhone } from "react-icons/bi";
+import { BiLogoFacebook, BiLogoInstagram, BiLogoWhatsapp, } from "react-icons/bi";
 
 export default function Footer() {
   return (

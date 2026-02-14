@@ -47,7 +47,7 @@ export default function TreatBar({ isOpen, onClose }) {
           </Link>
         </div>
 
-        <nav className="flex-1 py-10 flex flex-col space-y-4 overflow-y-auto">
+        <nav className="flex-1 py-10 flex flex-col space-y-4  overflow-y-auto">
           <NavLink to="/" className={linkClass} onClick={() => onClose && onClose()}>
             Kitchen
           </NavLink>

@@ -15,7 +15,7 @@ function Treats() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch Categories
+    
     fetch('https://www.themealdb.com/api/json/v1/1/categories.php')
       .then(res => res.json())
       .then(data => {
@@ -27,7 +27,7 @@ function Treats() {
       })
       .catch(err => console.error("Error fetching categories:", err));
 
-    // Fetch Areas
+    
     fetch('https://www.themealdb.com/api/json/v1/1/list.php?a=list')
       .then(res => res.json())
       .then(data => {
@@ -98,13 +98,13 @@ function Treats() {
 
   const handleCategoryClick = (cat) => {
     setCurrentCategory(cat);
-    setCurrentArea(""); // Reset area when category is selected
+    setCurrentArea(""); 
     setSearchTerm("");
   };
 
   const handleAreaClick = (area) => {
     setCurrentArea(area);
-    setCurrentCategory("All"); // Reset visual category
+    setCurrentCategory("All"); 
     setSearchTerm("");
   };
 

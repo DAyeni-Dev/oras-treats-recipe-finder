@@ -54,7 +54,7 @@ export default function About() {
                  <BiCart size={32} />
                </div>
                <h3 className="font-bold text-xl mb-3 text-[#8fbf1a]">Plan & Shop</h3>
-               <p className="text-white/80">Plan weekly meals, create smart grocery lists, and scale recipes.</p>
+               <p className="text-white/80">Plan meals daily,weekly or monthly. Create smart grocery lists, and scale recipes.</p>
             </div>
             <div className="text-center p-4">
                <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
