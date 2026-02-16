@@ -16,7 +16,7 @@ function MealPlanner() {
   const [editingMeal, setEditingMeal] = useState(null);
   const [newMeal, setNewMeal] = useState({ type: 'Breakfast', name: '', recipeId: '' });
 
-  // Get available meal types for the selected day
+  
   const getAvailableTypes = (date, excludeType = null) => {
     if (!date) return MEAL_TYPES;
     const dateKey = formatDateKey(date);
@@ -25,7 +25,7 @@ function MealPlanner() {
     return MEAL_TYPES.filter(type => !usedTypes.includes(type));
   };
 
-  // Update default meal type when modal opens
+  
   useEffect(() => {
     if (showAddModal && selectedDay) {
       if (editingMeal) {
@@ -39,7 +39,7 @@ function MealPlanner() {
     }
   }, [showAddModal, selectedDay, mealPlan, editingMeal]);
 
-  // Helper to check if a day is in the past
+ 
   const isPastDay = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -48,12 +48,12 @@ function MealPlanner() {
     return checkDate < today;
   };
 
-  // Helper to check if a day has all meal types filled
+  
   const isDayFull = (date) => {
     return getAvailableTypes(date).length === 0;
   };
 
-  // Load meal plan from local storage
+  
   useEffect(() => {
     const savedPlan = localStorage.getItem('mealPlan');
     if (savedPlan) {
@@ -76,7 +76,7 @@ function MealPlanner() {
   const getDaysInWeek = (date) => {
     const startOfWeek = new Date(date);
     const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); 
     startOfWeek.setDate(diff);
     
     return Array.from({ length: 7 }, (_, i) => {
@@ -152,11 +152,33 @@ function MealPlanner() {
     const mealTypes = MEAL_TYPES;
     const past = isPastDay(currentDate);
     const full = isDayFull(currentDate);
+    const isToday = formatDateKey(new Date()) === dateKey;
 
     return (
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="p-6 bg-[#005c29] text-white flex justify-between items-center">
-          <h2 className="text-2xl font-bold">{currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h2>
+          <div>
+            <h2 className="text-2xl font-bold">
+              {currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </h2>
+            <div className="mt-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+              {isToday && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white/10 border border-white/30">
+                  Today
+                </span>
+              )}
+              {past && !isToday && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white/10 border border-white/30">
+                  Past day (locked)
+                </span>
+              )}
+              {!past && full && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white/10 border border-white/30">
+                  All meal slots filled
+                </span>
+              )}
+            </div>
+          </div>
           {!past && !full && (
             <button 
               onClick={() => { setSelectedDay(currentDate); setEditingMeal(null); setShowAddModal(true); }}
