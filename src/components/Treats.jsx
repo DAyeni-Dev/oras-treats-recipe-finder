@@ -6,7 +6,7 @@ import drinksData from '../data/drinks.json';
 
 function Treats() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentCategory, setCurrentCategory] = useState("Dessert");
+  const [currentCategory, setCurrentCategory] = useState("All");
   const [currentArea, setCurrentArea] = useState("");
   const [treats, setTreats] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -20,8 +20,11 @@ function Treats() {
       .then(res => res.json())
       .then(data => {
         if (data.categories) {
-           const filteredCats = data.categories.filter(c => c.strCategory !== 'Goat');
+           const filteredCats = data.categories
+             .filter(c => c.strCategory !== 'Goat')
+             .map(c => ({ idCategory: c.idCategory, strCategory: c.strCategory }));
            filteredCats.push({ idCategory: 'drinks', strCategory: 'Drinks' });
+           filteredCats.sort((a, b) => a.strCategory.localeCompare(b.strCategory));
            setCategories(filteredCats);
         }
       })
@@ -44,67 +47,185 @@ function Treats() {
     setTreats([]);
 
     const delayDebounceFn = setTimeout(() => {
-      
-      if (currentCategory === 'Drinks' && !currentArea) {
-        const filteredDrinks = drinksData.filter(drink => {
-            if (!searchTerm) return true;
-            return drink.name.toLowerCase().includes(searchTerm.toLowerCase());
-        });
+      const fetchTreats = async () => {
+        try {
+          if (currentCategory === 'Drinks' && !currentArea) {
+            const filteredDrinks = drinksData.filter(drink => {
+              if (!searchTerm) return true;
+              return drink.name.toLowerCase().includes(searchTerm.toLowerCase());
+            });
 
-        const mappedDrinks = filteredDrinks.map(drink => ({
+            const mappedDrinks = filteredDrinks.map(drink => ({
+              idMeal: drink.id,
+              strMeal: drink.name,
+              strMealThumb: drink.image,
+              strCategory: drink.category,
+              strArea: drink.glass,
+              strTags: drink.type || 'Alcoholic'
+            }));
+
+            setTreats(mappedDrinks);
+            setLoading(false);
+            return;
+          }
+
+          const hasCategory = currentCategory && currentCategory !== 'All' && currentCategory !== 'Drinks';
+          const hasArea = !!currentArea;
+          const hasSearch = searchTerm.trim().length > 0;
+          const baseUrl = 'https://www.themealdb.com/api/json/v1/1';
+
+          if (hasCategory && hasArea) {
+            const res = await fetch(`${baseUrl}/filter.php?c=${encodeURIComponent(currentCategory)}`);
+            const data = await res.json();
+            const baseMeals = data.meals || [];
+
+            if (baseMeals.length === 0) {
+              setTreats([]);
+              setLoading(false);
+              return;
+            }
+
+            const detailed = await Promise.all(
+              baseMeals.map(m =>
+                fetch(`${baseUrl}/lookup.php?i=${m.idMeal}`)
+                  .then(r => r.json())
+                  .then(d => (d.meals && d.meals[0]) || null)
+                  .catch(() => null)
+              )
+            );
+
+            let filtered = detailed.filter(Boolean);
+
+            if (hasArea) {
+              filtered = filtered.filter(m => m.strArea === currentArea);
+            }
+
+            if (hasSearch) {
+              const searchLower = searchTerm.toLowerCase();
+              filtered = filtered.filter(m =>
+                m.strMeal.toLowerCase().includes(searchLower)
+              );
+            }
+
+            setTreats(filtered);
+            setLoading(false);
+            return;
+          }
+
+          if (hasCategory) {
+            const res = await fetch(`${baseUrl}/filter.php?c=${encodeURIComponent(currentCategory)}`);
+            const data = await res.json();
+            let baseMeals = data.meals || [];
+
+            if (hasSearch) {
+              const searchLower = searchTerm.toLowerCase();
+              baseMeals = baseMeals.filter(m =>
+                m.strMeal.toLowerCase().includes(searchLower)
+              );
+            }
+
+            setTreats(baseMeals);
+            setLoading(false);
+            return;
+          }
+
+          if (hasArea) {
+            const res = await fetch(`${baseUrl}/filter.php?a=${encodeURIComponent(currentArea)}`);
+            const data = await res.json();
+            let baseMeals = data.meals || [];
+
+            if (hasSearch) {
+              const searchLower = searchTerm.toLowerCase();
+              baseMeals = baseMeals.filter(m =>
+                m.strMeal.toLowerCase().includes(searchLower)
+              );
+            }
+
+            setTreats(baseMeals);
+            setLoading(false);
+            return;
+          }
+
+          if (hasSearch) {
+            const res = await fetch(`${baseUrl}/search.php?s=${encodeURIComponent(searchTerm)}`);
+            const data = await res.json();
+            setTreats(data.meals || []);
+            setLoading(false);
+            return;
+          }
+
+          if (!categories.length) {
+            const res = await fetch(`${baseUrl}/search.php?s=`);
+            const data = await res.json();
+            setTreats(data.meals || []);
+            setLoading(false);
+            return;
+          }
+
+          const categoryMealsArrays = await Promise.all(
+            categories
+              .filter(c => c.strCategory !== 'Drinks')
+              .map(c =>
+                fetch(`${baseUrl}/filter.php?c=${encodeURIComponent(c.strCategory)}`)
+                  .then(res => res.json())
+                  .then(data => data.meals || [])
+                  .catch(() => [])
+              )
+          );
+
+          let mergedMeals = categoryMealsArrays.flat();
+
+          const mappedDrinksAll = drinksData.map(drink => ({
             idMeal: drink.id,
             strMeal: drink.name,
             strMealThumb: drink.image,
             strCategory: drink.category,
             strArea: drink.glass,
             strTags: drink.type || 'Alcoholic'
-        }));
-        
-        setTreats(mappedDrinks);
-        setLoading(false);
+          }));
 
-      } else {
-        let url = '';
-        if (searchTerm) {
-          url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`;
-        } else if (currentArea) {
-          url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${currentArea}`;
-        } else {
-          const categoryToFetch = currentCategory === "All" ? "Dessert" : currentCategory;
-          url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${categoryToFetch}`;
-        }
+          mergedMeals = mergedMeals.concat(mappedDrinksAll);
 
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            if (data.meals) {
-              setTreats(data.meals);
-            } else {
-              setTreats([]);
+          const seenIds = new Set();
+          const uniqueMeals = [];
+          for (const meal of mergedMeals) {
+            if (!seenIds.has(meal.idMeal)) {
+              seenIds.add(meal.idMeal);
+              uniqueMeals.push(meal);
             }
-            setLoading(false);
-          })
-          .catch(err => {
-            console.error("Error fetching treats:", err);
-            setError("Failed to load treats. Please try again.");
-            setLoading(false);
-          });
-      }
+          }
 
+          uniqueMeals.sort((a, b) => {
+            const nameA = (a.strMeal || '').toLowerCase();
+            const nameB = (b.strMeal || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
+
+          setTreats(uniqueMeals);
+          setLoading(false);
+        } catch (err) {
+          console.error("Error fetching treats:", err);
+          setError("Failed to load treats. Please try again.");
+          setLoading(false);
+        }
+      };
+
+      fetchTreats();
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, currentCategory, currentArea]);
+  }, [searchTerm, currentCategory, currentArea, categories]);
 
   const handleCategoryClick = (cat) => {
     setCurrentCategory(cat);
-    setCurrentArea(""); 
+    if (cat === 'Drinks') {
+      setCurrentArea("");
+    }
     setSearchTerm("");
   };
 
   const handleAreaClick = (area) => {
     setCurrentArea(area);
-    setCurrentCategory("All"); 
     setSearchTerm("");
   };
 
@@ -196,43 +317,77 @@ function Treats() {
         )}
 
         {!loading && !error && (
-          treats.length > 0 ? (
-            <motion.div 
-              layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              <AnimatePresence mode='popLayout'>
-                {treats.map(treat => (
-                  <motion.div
-                    key={treat.idMeal}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <TreatCard 
-                      id={treat.idMeal}
-                      title={treat.strMeal}
-                      image={treat.strMealThumb}
-                      tags={[
-                        treat.strCategory || currentCategory, 
-                        treat.strArea,
-                        ...(treat.strTags ? treat.strTags.split(',') : [])
-                      ].filter(Boolean).slice(0, 3)}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          ) : (
-            <div className="text-center py-20">
-                   <h3 className="text-2xl font-bold text-gray-700 mb-2">
-                {currentCategory === 'Drinks' ? "No drinks found!" : "No treats found!"}
-              </h3>
-              <p className="text-gray-500">Try adjusting your search or filters.</p>
+          <>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+              <div className="text-sm text-gray-500">
+                Showing{" "}
+                <span className="font-semibold">{treats.length}</span>{" "}
+                {currentCategory === 'Drinks' ? 'drinks' : 'treats'}
+                {currentArea && (
+                  <span>
+                    {" "}from <span className="font-semibold">{currentArea}</span>
+                  </span>
+                )}
+                {searchTerm && (
+                  <span>
+                    {" "}matching <span className="font-semibold">"{searchTerm}"</span>
+                  </span>
+                )}
+              </div>
+              {(searchTerm || currentArea || currentCategory !== "All") && (
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setCurrentArea("");
+                    setCurrentCategory("All");
+                  }}
+                  className="text-xs font-semibold uppercase tracking-wide text-[#005c29] hover:text-[#f93270] hover:underline"
+                >
+                  Clear filters
+                </button>
+              )}
             </div>
-          )
+
+            {treats.length > 0 ? (
+              <motion.div 
+                layout
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                <AnimatePresence mode='popLayout'>
+                  {treats.map(treat => (
+                    <motion.div
+                      key={treat.idMeal}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <TreatCard 
+                        id={treat.idMeal}
+                        title={treat.strMeal}
+                        image={treat.strMealThumb}
+                        tags={[
+                          treat.strCategory || currentCategory, 
+                          treat.strArea,
+                          ...(treat.strTags ? treat.strTags.split(',') : [])
+                        ].filter(Boolean).slice(0, 3)}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            ) : (
+              <div className="text-center py-20">
+                <h3 className="text-2xl font-bold text-gray-700 mb-2">
+                  {currentCategory === 'Drinks' ? "No drinks found!" : "No treats found!"}
+                </h3>
+                <p className="text-gray-500">
+                  Try adjusting your search, category, or cuisine filters.
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
