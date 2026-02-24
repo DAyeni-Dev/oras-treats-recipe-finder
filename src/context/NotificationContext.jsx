@@ -3,6 +3,7 @@ import { BiCheckCircle, BiInfoCircle, BiX, BiError } from 'react-icons/bi';
 
 const NotificationContext = createContext();
 
+
 export const useNotification = () => {
   const context = useContext(NotificationContext);
   if (!context) {

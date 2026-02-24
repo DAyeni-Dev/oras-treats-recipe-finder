@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BiSearch, BiFilter, BiLoaderAlt, BiGlobe } from 'react-icons/bi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import TreatCard from './TreatCard';
 import drinksData from '../data/drinks.json';
 
@@ -349,13 +349,13 @@ function Treats() {
             </div>
 
             {treats.length > 0 ? (
-              <motion.div 
+              <Motion.div 
                 layout
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
               >
                 <AnimatePresence mode='popLayout'>
                   {treats.map(treat => (
-                    <motion.div
+                    <Motion.div
                       key={treat.idMeal}
                       layout
                       initial={{ opacity: 0, scale: 0.9 }}
@@ -373,10 +373,10 @@ function Treats() {
                           ...(treat.strTags ? treat.strTags.split(',') : [])
                         ].filter(Boolean).slice(0, 3)}
                       />
-                    </motion.div>
+                    </Motion.div>
                   ))}
                 </AnimatePresence>
-              </motion.div>
+              </Motion.div>
             ) : (
               <div className="text-center py-20">
                 <h3 className="text-2xl font-bold text-gray-700 mb-2">

@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BiCalendar, BiChevronLeft, BiChevronRight, BiTrash, BiPlus, BiShoppingBag } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Fruits'];
+
+const formatDateKey = (date) => {
+  return date.toISOString().split('T')[0];
+};
 
 function MealPlanner() {
   const { showNotification } = useNotification();
@@ -17,13 +21,13 @@ function MealPlanner() {
   const [newMeal, setNewMeal] = useState({ type: 'Breakfast', name: '', recipeId: '' });
 
   
-  const getAvailableTypes = (date, excludeType = null) => {
+  const getAvailableTypes = useCallback((date, excludeType = null) => {
     if (!date) return MEAL_TYPES;
     const dateKey = formatDateKey(date);
     const existingMeals = mealPlan[dateKey] || [];
     const usedTypes = existingMeals.map(m => m.type).filter(t => t !== excludeType);
     return MEAL_TYPES.filter(type => !usedTypes.includes(type));
-  };
+  }, [mealPlan]);
 
   
   useEffect(() => {
@@ -37,7 +41,7 @@ function MealPlanner() {
         }
       }
     }
-  }, [showAddModal, selectedDay, mealPlan, editingMeal]);
+  }, [showAddModal, selectedDay, mealPlan, editingMeal, getAvailableTypes]);
 
  
   const isPastDay = (date) => {
@@ -86,9 +90,6 @@ function MealPlanner() {
     });
   };
 
-  const formatDateKey = (date) => {
-    return date.toISOString().split('T')[0];
-  };
 
   const handlePrev = () => {
     const newDate = new Date(currentDate);
@@ -390,7 +391,7 @@ function MealPlanner() {
         </div>
 
         <AnimatePresence mode="wait">
-          <motion.div
+          <Motion.div
             key={view + currentDate.toISOString()}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -400,7 +401,7 @@ function MealPlanner() {
             {view === 'daily' && renderDailyView()}
             {view === 'weekly' && renderWeeklyView()}
             {view === 'monthly' && renderMonthlyView()}
-          </motion.div>
+          </Motion.div>
         </AnimatePresence>
       </div>
 

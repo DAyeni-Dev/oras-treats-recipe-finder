@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BiMenu } from 'react-icons/bi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import TreatBar from './TreatBar';
 import Footer from './Footer';
 
@@ -26,7 +26,7 @@ const Layout = () => {
       <main className="flex-1 relative flex flex-col overflow-y-auto w-full bg-gray-50">
         
         <AnimatePresence mode="wait">
-          <motion.div
+          <Motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -39,7 +39,7 @@ const Layout = () => {
             </div>
             
             <Footer />
-          </motion.div>
+          </Motion.div>
         </AnimatePresence>
       </main>
     </div>

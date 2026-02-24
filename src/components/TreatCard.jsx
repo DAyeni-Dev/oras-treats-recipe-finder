@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BiHeart, BiSolidHeart } from 'react-icons/bi';
+import { BiHeart, BiSolidHeart, BiCalendarPlus } from 'react-icons/bi';
 import { useNotification } from '../context/NotificationContext';
 
-function TreatCard({ id, title, image, tags, onToggle }) {
+function TreatCard({ id, title, image, tags, onToggle, showPlanButton, onPlan }) {
   const { showNotification } = useNotification();
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -71,8 +71,23 @@ function TreatCard({ id, title, image, tags, onToggle }) {
             ))}
           </div>
 
-          <div className="mt-auto flex items-center justify-between text-sm text-gray-500 pt-3 border-t border-gray-100">
+          <div className="mt-auto flex items-center justify-between text-sm pt-3 border-t border-gray-100">
             <span className="text-[#f93270] font-semibold group-hover:underline">View Recipe →</span>
+            
+            {showPlanButton && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onPlan && onPlan({ id, title, image, tags });
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#005c29]/5 hover:bg-[#005c29] text-[#005c29] hover:text-white rounded-lg transition-all font-bold text-xs"
+                title="Add to Meal Planner"
+              >
+                <BiCalendarPlus size={16} />
+                Plan
+              </button>
+            )}
           </div>
         </div>
       </Link>
