@@ -18,9 +18,9 @@ export default function Footer() {
 
         
         <div className="flex gap-6 text-sm font-medium">
-          <Link to="/treats" className="hover:text-[#f93270] transition-colors">Treats Collection</Link>
+          <Link to="/treats" className="hover:text-[#f93270] transition-colors">Treats </Link>
           <Link to="/grocerylist" className="hover:text-[#f93270] transition-colors">Market Basket</Link>
-          <Link to="/" className="hover:text-[#f93270] transition-colors">Kitchen | Home</Link>
+          <Link to="/" className="hover:text-[#f93270] transition-colors">Kitchen </Link>
         </div>
 
         
@@ -37,7 +37,7 @@ export default function Footer() {
             </a>
           </div>
           <div className="flex flex-col items-center md:items-end gap-1 text-xs opacity-90">
-             <a href="mailto:oluwadamilolaayeni321@gmail.com" className="hover:text-[#f93270]">oluwadamilolaayeni321@gmail.com</a>
+             <a href="mailto:oras.treats26@gmail.com" className="hover:text-[#f93270]">oras.treats26@gmail.com</a>
              <a href="tel:+2347079139920" className="hover:text-[#f93270]">+234 707 913 9920</a>
           </div>
         </div>

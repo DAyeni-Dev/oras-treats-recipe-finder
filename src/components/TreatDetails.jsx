@@ -4,6 +4,8 @@ import { BiArrowBack, BiTime, BiDish, BiDrink, BiPlus, BiShoppingBag, BiCheck, B
 import drinksData from '../data/drinks.json';
 import { useNotification } from '../context/NotificationContext';
 
+import nigerianMealsData from '../data/nigerianMeals.json';
+
 function TreatDetails() {
   const { showNotification } = useNotification();
   const { id } = useParams();
@@ -124,6 +126,14 @@ function TreatDetails() {
        setIsDrink(true);
        setLoading(false);
        return;
+    }
+
+    const localNigerian = nigerianMealsData.find(m => m.idMeal === id);
+    if (localNigerian) {
+      setTreat(localNigerian);
+      setIsDrink(false);
+      setLoading(false);
+      return;
     }
     
     fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)

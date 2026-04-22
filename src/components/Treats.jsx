@@ -3,6 +3,7 @@ import { BiSearch, BiFilter, BiLoaderAlt, BiGlobe } from 'react-icons/bi';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import TreatCard from './TreatCard';
 import drinksData from '../data/drinks.json';
+import nigerianMealsData from '../data/nigerianMeals.json';
 
 function Treats() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +25,10 @@ function Treats() {
              .filter(c => c.strCategory !== 'Goat')
              .map(c => ({ idCategory: c.idCategory, strCategory: c.strCategory }));
            filteredCats.push({ idCategory: 'drinks', strCategory: 'Drinks' });
+           if (!filteredCats.find(c => c.strCategory === 'Nigerian')) {
+             filteredCats.push({ idCategory: 'nigerian', strCategory: 'Nigerian' });
+           }
+           
            filteredCats.sort((a, b) => a.strCategory.localeCompare(b.strCategory));
            setCategories(filteredCats);
         }
@@ -35,7 +40,12 @@ function Treats() {
       .then(res => res.json())
       .then(data => {
         if (data.meals) {
-          setAreas(data.meals);
+          const areaList = data.meals;
+          if (!areaList.find(a => a.strArea === 'Nigerian')) {
+            areaList.push({ strArea: 'Nigerian' });
+          }
+          areaList.sort((a, b) => a.strArea.localeCompare(b.strArea));
+          setAreas(areaList);
         }
       })
       .catch(err => console.error("Error fetching areas:", err));
@@ -49,6 +59,7 @@ function Treats() {
     const delayDebounceFn = setTimeout(() => {
       const fetchTreats = async () => {
         try {
+          // 1. Drinks handling
           if (currentCategory === 'Drinks' && !currentArea) {
             const filteredDrinks = drinksData.filter(drink => {
               if (!searchTerm) return true;
@@ -69,8 +80,30 @@ function Treats() {
             return;
           }
 
-          const hasCategory = currentCategory && currentCategory !== 'All' && currentCategory !== 'Drinks';
-          const hasArea = !!currentArea;
+          // 2. Nigerian handling
+          if (currentArea === 'Nigerian' || currentCategory === 'Nigerian') {
+            let results = [...nigerianMealsData];
+            
+            if (currentArea && currentArea !== 'Nigerian') {
+               results = results.filter(m => m.strArea === currentArea);
+            }
+            if (currentCategory && currentCategory !== 'Nigerian' && currentCategory !== 'All') {
+               results = results.filter(m => m.strCategory === currentCategory);
+            }
+            if (searchTerm) {
+              const searchLower = searchTerm.toLowerCase();
+              results = results.filter(m => 
+                m.strMeal.toLowerCase().includes(searchLower)
+              );
+            }
+            
+            setTreats(results);
+            setLoading(false);
+            return;
+          }
+
+          const hasCategory = currentCategory && currentCategory !== 'All' && currentCategory !== 'Drinks' && currentCategory !== 'Nigerian';
+          const hasArea = !!currentArea && currentArea !== 'Nigerian';
           const hasSearch = searchTerm.trim().length > 0;
           const baseUrl = 'https://www.themealdb.com/api/json/v1/1';
 
@@ -149,7 +182,14 @@ function Treats() {
           if (hasSearch) {
             const res = await fetch(`${baseUrl}/search.php?s=${encodeURIComponent(searchTerm)}`);
             const data = await res.json();
-            setTreats(data.meals || []);
+            const apiMeals = data.meals || [];
+            
+            const searchLower = searchTerm.toLowerCase();
+            const localNigerian = nigerianMealsData.filter(m => 
+              m.strMeal.toLowerCase().includes(searchLower)
+            );
+            
+            setTreats([...apiMeals, ...localNigerian]);
             setLoading(false);
             return;
           }
@@ -157,14 +197,14 @@ function Treats() {
           if (!categories.length) {
             const res = await fetch(`${baseUrl}/search.php?s=`);
             const data = await res.json();
-            setTreats(data.meals || []);
+            setTreats([...(data.meals || []), ...nigerianMealsData]);
             setLoading(false);
             return;
           }
 
           const categoryMealsArrays = await Promise.all(
             categories
-              .filter(c => c.strCategory !== 'Drinks')
+              .filter(c => c.strCategory !== 'Drinks' && c.strCategory !== 'Nigerian')
               .map(c =>
                 fetch(`${baseUrl}/filter.php?c=${encodeURIComponent(c.strCategory)}`)
                   .then(res => res.json())
@@ -174,6 +214,8 @@ function Treats() {
           );
 
           let mergedMeals = categoryMealsArrays.flat();
+
+          mergedMeals = mergedMeals.concat(nigerianMealsData);
 
           const mappedDrinksAll = drinksData.map(drink => ({
             idMeal: drink.id,
