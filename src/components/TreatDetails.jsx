@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BiArrowBack, BiTime, BiDish, BiDrink, BiPlus, BiShoppingBag, BiCheck, BiHeart, BiSolidHeart } from 'react-icons/bi';
 import drinksData from '../data/drinks.json';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../context/NotificationContextBase';
 
 import nigerianMealsData from '../data/nigerianMeals.json';
 

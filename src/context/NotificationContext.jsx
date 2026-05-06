@@ -1,16 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BiCheckCircle, BiInfoCircle, BiX, BiError } from 'react-icons/bi';
-
-const NotificationContext = createContext();
-
-
-export const useNotification = () => {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotification must be used within a NotificationProvider');
-  }
-  return context;
-};
+import { NotificationContext } from './NotificationContextBase';
+import { NOTIFICATION_DURATION } from '../constants/config';
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
@@ -19,8 +10,8 @@ export const NotificationProvider = ({ children }) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   }, []);
 
-  const showNotification = useCallback((message, type = 'success', duration = 3000) => {
-    const id = Date.now() + Math.random();
+  const showNotification = useCallback((message, type = 'success', duration = NOTIFICATION_DURATION) => {
+    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     setNotifications(prev => [...prev, { id, message, type }]);
 
     setTimeout(() => {
@@ -31,7 +22,7 @@ export const NotificationProvider = ({ children }) => {
   return (
     <NotificationContext.Provider value={{ showNotification }}>
       {children}
-      <div className="fixed top-24 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+      <div className="fixed top-24 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm">
         {notifications.map(({ id, message, type }) => (
           <div
             key={id}
@@ -50,6 +41,7 @@ export const NotificationProvider = ({ children }) => {
             <span className="font-medium text-sm md:text-base">{message}</span>
             <button 
               onClick={() => removeNotification(id)}
+              aria-label="Close notification"
               className="ml-2 hover:bg-white/20 rounded-full p-1 transition-colors"
             >
               <BiX className="text-lg" />

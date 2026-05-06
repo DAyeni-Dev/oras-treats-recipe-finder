@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BiTrash, BiCheck, BiShoppingBag, BiArrowBack, BiPlus } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../context/NotificationContextBase';
 
 function MarketBasket() {
   const { showNotification } = useNotification();

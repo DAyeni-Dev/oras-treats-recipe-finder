@@ -1,34 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { BiHeart, BiSolidHeart, BiCalendarPlus } from 'react-icons/bi';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../context/NotificationContextBase';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { NOTIFICATION_DURATION } from '../constants/config';
 
 function TreatCard({ id, title, image, tags, onToggle, showPlanButton, onPlan }) {
   const { showNotification } = useNotification();
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  useEffect(() => {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    setIsFavorite(favorites.some(fav => fav.id === id));
-  }, [id]);
+  const [favorites, setFavorites] = useLocalStorage('favorites', []);
+  const isFavorite = favorites.some(fav => fav.id === id);
 
   const toggleFavorite = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     let newFavorites;
 
     if (isFavorite) {
       newFavorites = favorites.filter(fav => fav.id !== id);
-      showNotification('Removed from Favorites', 'error');
+      showNotification('Removed from Favorites', 'error', NOTIFICATION_DURATION);
     } else {
       newFavorites = [...favorites, { id, title, image, tags }];
-      showNotification('Added to Favorites!');
+      showNotification('Added to Favorites!', 'success', NOTIFICATION_DURATION);
     }
 
-    localStorage.setItem('favorites', JSON.stringify(newFavorites));
-    setIsFavorite(!isFavorite);
+    setFavorites(newFavorites);
     
     if (onToggle) {
       onToggle();
@@ -43,11 +39,15 @@ function TreatCard({ id, title, image, tags, onToggle, showPlanButton, onPlan })
         <div className="relative h-48 w-full overflow-hidden">
           <img 
             src={image || "https://placehold.co/600x400?text=Yummy+Treat"} 
-            alt={title} 
+            alt={`Recipe for ${title}`} 
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <button
             onClick={toggleFavorite}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            aria-pressed={isFavorite}
             className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-sm hover:bg-white transition-all transform hover:scale-110 z-10"
           >
             {isFavorite ? (
@@ -81,6 +81,7 @@ function TreatCard({ id, title, image, tags, onToggle, showPlanButton, onPlan })
                   e.stopPropagation();
                   onPlan && onPlan({ id, title, image, tags });
                 }}
+                aria-label="Add to meal planner"
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-[#005c29]/5 hover:bg-[#005c29] text-[#005c29] hover:text-white rounded-lg transition-all font-bold text-xs"
                 title="Add to Meal Planner"
               >
@@ -95,4 +96,12 @@ function TreatCard({ id, title, image, tags, onToggle, showPlanButton, onPlan })
   );
 }
 
-export default TreatCard;
+export default React.memo(TreatCard, (prevProps, nextProps) => {
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.title === nextProps.title &&
+    prevProps.image === nextProps.image &&
+    JSON.stringify(prevProps.tags) === JSON.stringify(nextProps.tags) &&
+    prevProps.showPlanButton === nextProps.showPlanButton
+  );
+});

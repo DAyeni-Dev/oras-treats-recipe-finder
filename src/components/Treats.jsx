@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BiSearch, BiFilter, BiLoaderAlt, BiGlobe } from 'react-icons/bi';
+import { BiSearch, BiFilter, BiLoaderAlt, BiGlobe, BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import TreatCard from './TreatCard';
 import drinksData from '../data/drinks.json';
 import nigerianMealsData from '../data/nigerianMeals.json';
+import { ITEMS_PER_PAGE, SEARCH_DEBOUNCE_TIME } from '../constants/config';
 
 function Treats() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +15,9 @@ function Treats() {
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
+  const [areasLoaded, setAreasLoaded] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     
@@ -31,6 +35,7 @@ function Treats() {
            
            filteredCats.sort((a, b) => a.strCategory.localeCompare(b.strCategory));
            setCategories(filteredCats);
+           setCategoriesLoaded(true);
         }
       })
       .catch(err => console.error("Error fetching categories:", err));
@@ -46,6 +51,7 @@ function Treats() {
           }
           areaList.sort((a, b) => a.strArea.localeCompare(b.strArea));
           setAreas(areaList);
+          setAreasLoaded(true);
         }
       })
       .catch(err => console.error("Error fetching areas:", err));
@@ -56,9 +62,9 @@ function Treats() {
     setError(null);
     setTreats([]);
 
-    const delayDebounceFn = setTimeout(() => {
-      const fetchTreats = async () => {
-        try {
+    const delayDebounceFn = setTimeout(async () => {
+      if (!categoriesLoaded || !areasLoaded) return;
+      try {
           // 1. Drinks handling
           if (currentCategory === 'Drinks' && !currentArea) {
             const filteredDrinks = drinksData.filter(drink => {
@@ -250,13 +256,10 @@ function Treats() {
           setError("Failed to load treats. Please try again.");
           setLoading(false);
         }
-      };
-
-      fetchTreats();
-    }, 500);
+    }, SEARCH_DEBOUNCE_TIME);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, currentCategory, currentArea, categories]);
+  }, [searchTerm, currentCategory, currentArea, categories, categoriesLoaded, areasLoaded]);
 
   const handleCategoryClick = (cat) => {
     setCurrentCategory(cat);
@@ -269,6 +272,30 @@ function Treats() {
   const handleAreaClick = (area) => {
     setCurrentArea(area);
     setSearchTerm("");
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil(treats.length / ITEMS_PER_PAGE);
+  const paginatedTreats = treats.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
   };
 
   return (
@@ -363,7 +390,10 @@ function Treats() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
               <div className="text-sm text-gray-500">
                 Showing{" "}
-                <span className="font-semibold">{treats.length}</span>{" "}
+                <span className="font-semibold">
+                  {treats.length > 0 ? ((currentPage - 1) * ITEMS_PER_PAGE) + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, treats.length)}
+                </span>{" "}
+                of <span className="font-semibold">{treats.length}</span>{" "}
                 {currentCategory === 'Drinks' ? 'drinks' : 'treats'}
                 {currentArea && (
                   <span>
@@ -382,6 +412,7 @@ function Treats() {
                     setSearchTerm("");
                     setCurrentArea("");
                     setCurrentCategory("All");
+                    setCurrentPage(1);
                   }}
                   className="text-xs font-semibold uppercase tracking-wide text-[#005c29] hover:text-[#f93270] hover:underline"
                 >
@@ -396,7 +427,7 @@ function Treats() {
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
               >
                 <AnimatePresence mode='popLayout'>
-                  {treats.map(treat => (
+                  {paginatedTreats.map(treat => (
                     <Motion.div
                       key={treat.idMeal}
                       layout
@@ -427,6 +458,53 @@ function Treats() {
                 <p className="text-gray-500">
                   Try adjusting your search, category, or cuisine filters.
                 </p>
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-12">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  aria-label="Previous page"
+                >
+                  <BiChevronLeft />
+                  Previous
+                </button>
+
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                    if (pageNum > totalPages) return null;
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-3 py-2 rounded-lg border transition-colors ${
+                          currentPage === pageNum
+                            ? 'bg-[#8fbf1a] text-white border-[#8fbf1a]'
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                        aria-label={`Page ${pageNum}`}
+                        aria-current={currentPage === pageNum ? 'page' : undefined}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  aria-label="Next page"
+                >
+                  Next
+                  <BiChevronRight />
+                </button>
               </div>
             )}
           </>

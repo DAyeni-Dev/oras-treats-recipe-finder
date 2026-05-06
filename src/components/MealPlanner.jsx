@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BiCalendar, BiChevronLeft, BiChevronRight, BiTrash, BiPlus, BiShoppingBag } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../context/NotificationContextBase';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Fruits'];

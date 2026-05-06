@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BiHeart, BiShoppingBag, BiTrash, BiX } from 'react-icons/bi';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import TreatCard from './TreatCard';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../context/NotificationContextBase';
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Fruits'];
 

@@ -4,13 +4,16 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { NotificationProvider } from "./context/NotificationContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <NotificationProvider>
-        <App />
-      </NotificationProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <NotificationProvider>
+          <App />
+        </NotificationProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>
 );
