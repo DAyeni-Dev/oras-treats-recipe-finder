@@ -63,6 +63,9 @@ export default function TreatBar({ isOpen, onClose }) {
           <NavLink to="/planner" className={linkClass} onClick={() => onClose && onClose()}>
             Treat Map
           </NavLink>
+          <NavLink to="/calculator" className={linkClass} onClick={() => onClose && onClose()}>
+            Calorie Calculator
+          </NavLink>
           <NavLink to="/grocerylist" className={linkClass} onClick={() => onClose && onClose()}>
             Market Basket
           </NavLink>

@@ -10,6 +10,7 @@ const MarketBasket = lazy(() => import("./components/MarketBasket"));
 const Favorites = lazy(() => import("./components/Favorites"));
 const MealPlanner = lazy(() => import("./components/MealPlanner"));
 const Community = lazy(() => import("./components/Community"));
+const CalorieCalculator = lazy(() => import("./components/CalorieCalculator"));
 
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -49,6 +50,11 @@ function App() {
         <Route path="planner" element={
           <Suspense fallback={<LoadingSpinner />}>
             <MealPlanner />
+          </Suspense>
+        } />
+        <Route path="calculator" element={
+          <Suspense fallback={<LoadingSpinner />}>
+            <CalorieCalculator />
           </Suspense>
         } />
         <Route path="grocerylist" element={
